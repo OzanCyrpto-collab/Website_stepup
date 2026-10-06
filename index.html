@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="StepUp: kinderen bewegen spelenderwijs meer met uitdagingen, een virtueel huisdier, munten en beloningen.">
+    <title>StepUp - Samen meer bewegen</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <!-- ===== WELKOMSTSCHERM: naam invoeren ===== -->
+    <div class="welkom" id="welkom" role="dialog" aria-modal="true" aria-labelledby="welkom-titel" hidden>
+        <form class="welkom-kaart" id="naam-form" novalidate>
+            <img src="StepUplogo.png" alt="StepUp" class="welkom-logo" width="140" height="140">
+            <h2 id="welkom-titel">Welkom bij StepUp!</h2>
+            <p>Hoe heet jij?</p>
+            <label for="naam-invoer" class="visually-hidden">Jouw naam</label>
+            <input id="naam-invoer" type="text" maxlength="20" autocomplete="given-name" placeholder="Typ hier je naam">
+            <p class="fout" id="naam-fout" role="alert"></p>
+            <button type="submit" class="btn btn-start">Start 🚀</button>
+            <button type="button" class="link-knop" id="btn-annuleer" hidden>Annuleren</button>
+        </form>
+    </div>
+
+    <!-- ===== HEADER MET LOGO ===== -->
+    <header class="site-header">
+        <div class="container header-inner">
+            <a href="index.html" class="logo">
+                <!-- Vervang StepUplogo.png door je eigen logo-bestand -->
+                <img src="StepUplogo.png" alt="StepUp - home" class="logo-img" width="72" height="72">
+            </a>
+            <nav class="main-nav" aria-label="Hoofdmenu">
+                <ul>
+                    <li><a href="#dashboard">Dashboard</a></li>
+                    <li><a href="#huisdier">Huisdier</a></li>
+                    <li><a href="#winkel">Winkel</a></li>
+                    <li><a href="#opdracht">Uitdaging</a></li>
+                    <li><a href="#klas">Klas</a></li>
+                    <li><a href="#ouders">Ouders</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+
+        <!-- 1. DASHBOARD -->
+        <section id="dashboard" class="section dashboard">
+            <div class="container">
+                <h1 class="welcome-title">Hoi <span id="gebruikersnaam"></span>! 👋</h1>
+                <p class="welcome-text">Kies een uitdaging, beweeg en verdien XP en munten.
+                    <button type="button" class="link-knop" id="btn-naam-wijzigen">Naam wijzigen</button></p>
+
+                <div class="stats-grid">
+                    <article class="stat-card">
+                        <span class="stat-icon" aria-hidden="true">⭐</span>
+                        <h2 class="stat-label">Totaal XP</h2>
+                        <p class="stat-value"><span id="xp-totaal">0</span> XP</p>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-icon" aria-hidden="true">🏆</span>
+                        <h2 class="stat-label">Niveau</h2>
+                        <p class="stat-value" id="niveau-dashboard">1</p>
+                    </article>
+                    <article class="stat-card">
+                        <span class="stat-icon" aria-hidden="true">🪙</span>
+                        <h2 class="stat-label">Munten</h2>
+                        <p class="stat-value" id="munten-dashboard">0</p>
+                    </article>
+                </div>
+
+                <div class="progress-block">
+                    <label for="xp-voortgang" class="progress-label">
+                        Nog <span id="xp-tot-volgend-niveau">100</span> XP tot niveau <span id="volgend-niveau">2</span>
+                    </label>
+                    <progress id="xp-voortgang" class="progress-bar" value="0" max="100">0%</progress>
+                </div>
+            </div>
+        </section>
+
+        <!-- 2. HUISDIER + WINKEL -->
+        <section id="huisdier" class="section pet">
+            <div class="container">
+                <h2 class="section-title">Mijn huisdier 🐾</h2>
+
+                <div class="pet-card">
+                    <button type="button" class="pet-avatar" id="huisdier-avatar" aria-label="Jouw huisdier. Klik om je huisdier te laten springen">
+                        <span class="pet-figuur">
+                            <span class="pet-emoji" id="pet-emoji">🐶</span>
+                            <span class="pet-acc pet-ketting" id="acc-ketting"></span>
+                            <span class="pet-acc pet-bril" id="acc-bril"></span>
+                            <span class="pet-acc pet-cap" id="acc-hoofd"></span>
+                        </span>
+                        <span class="pet-schaduw"></span>
+                        <span class="pet-badge" id="pet-badge">Niv. 1</span>
+                    </button>
+                    <div class="pet-info">
+                        <h3 class="pet-name" id="huisdier-naam">Bello</h3>
+                        <p class="pet-mood" id="huisdier-stemming"></p>
+                        <div class="pet-meter">
+                            <label for="huisdier-niveau-balk">Niveau <span id="huisdier-niveau">1</span></label>
+                            <progress id="huisdier-niveau-balk" class="progress-bar" value="0" max="100">0%</progress>
+                        </div>
+                        <div class="pet-meter">
+                            <label for="huisdier-gezondheid">Gezondheid ❤️</label>
+                            <progress id="huisdier-gezondheid" class="progress-bar progress-health" value="80" max="100">80%</progress>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="shop" id="winkel">
+                    <div class="shop-kop">
+                        <h3>Winkel 🛍️</h3>
+                        <p class="munten-saldo">Jouw munten: <strong id="munten-winkel">0</strong> 🪙</p>
+                    </div>
+                    <div class="shop-tabs" id="shop-tabs" role="tablist" aria-label="Winkelcategorieën"></div>
+                    <div class="shop-lijst" id="shop"></div>
+                    <p class="task-status" id="shop-status" role="status">Verdien munten met uitdagingen en koop dieren en accessoires!</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. UITDAGING KIEZEN + TIMER -->
+        <section id="opdracht" class="section daily-task">
+            <div class="container">
+                <h2 class="section-title">Kies je uitdaging 🎯</h2>
+                <div class="challenge-picker" id="keuzemenu" role="group" aria-label="Kies een beweeguitdaging"></div>
+
+                <article class="task-card" id="task-card">
+                    <div class="task-header">
+                        <span class="task-icon" id="task-icon" aria-hidden="true">🪢</span>
+                        <div>
+                            <h3 class="task-title" id="task-title"></h3>
+                            <p class="task-description" id="task-description"></p>
+                        </div>
+                        <span class="task-reward-badge" id="task-badge"></span>
+                    </div>
+
+                    <div class="timer">
+                        <p class="timer-label" id="timer-label">Resterende tijd</p>
+                        <p class="timer-display" id="timer-display">10:00</p>
+                        <progress id="timer-voortgang" class="progress-bar" value="0" max="100">0%</progress>
+                    </div>
+
+                    <div class="task-buttons">
+                        <button type="button" id="btn-start" class="btn btn-start">▶ Start</button>
+                        <button type="button" id="btn-stop" class="btn btn-stop" disabled>⏸ Pauze</button>
+                        <button type="button" id="btn-skip" class="btn btn-skip" disabled>⏭ Al klaar? Sla timer over</button>
+                        <button type="button" id="btn-voltooid" class="btn btn-complete" disabled>✅ Opdracht voltooid</button>
+                    </div>
+                    <p class="task-status" id="opdracht-status" role="status"></p>
+                </article>
+            </div>
+        </section>
+
+        <!-- 4. KLAS -->
+        <section id="klas" class="section competition">
+            <div class="container">
+                <h2 class="section-title">Klaswedstrijd 🏅</h2>
+                <div class="table-wrapper">
+                    <table class="leaderboard">
+                        <caption class="visually-hidden">Ranglijst van de klas</caption>
+                        <thead><tr><th scope="col">#</th><th scope="col">Naam</th><th scope="col">Huisdier</th><th scope="col">XP</th></tr></thead>
+                        <tbody id="ranglijst"></tbody>
+                    </table>
+                </div>
+                <div class="class-goal">
+                    <label for="klasdoel">Klasdoel: 2000 XP deze week</label>
+                    <progress id="klasdoel" class="progress-bar" value="1250" max="2000">62%</progress>
+                </div>
+            </div>
+        </section>
+
+        <!-- OUDERS -->
+        <section id="ouders" class="section parents">
+            <div class="container">
+                <h2 class="section-title">Voor ouders 👨‍👩‍👧</h2>
+                <div class="parents-grid">
+                    <article class="parent-card">
+                        <h3>Bewegingstijd</h3>
+                        <p class="parent-value"><span id="ouder-minuten">0</span> minuten</p>
+                        <p class="parent-note">Totaal via StepUp.</p>
+                    </article>
+                    <article class="parent-card">
+                        <h3>Voltooide opdrachten</h3>
+                        <p class="parent-value" id="ouder-opdrachten">0</p>
+                        <p class="parent-note">Elke opdracht levert XP en munten op.</p>
+                    </article>
+                    <article class="parent-card">
+                        <h3>Advies</h3>
+                        <p class="parent-value">60 min</p>
+                        <p class="parent-note">Per dag, volgens de Nederlandse Beweegrichtlijn.</p>
+                    </article>
+                </div>
+                <p class="privacy-note">🔒 De naam en voortgang blijven alleen in deze browser bewaard.</p>
+            </div>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <div class="container"><p>&copy; 2026 StepUp. Samen meer bewegen!</p></div>
+    </footer>
+
+    <script>
+    (() => {
+        'use strict';
+
+        // ---------- Instellingen (pas hier tijden, XP, munten en prijzen aan) ----------
+        const UITDAGINGEN = [
+            { id: 'touw',   naam: 'Touwtjespringen',    icoon: '🪢', type: 'timer', waarde: 600, xp: 50, munten: 25, minuten: 10, tekst: 'Spring 10 minuten met je springtouw. Rusten mag met de pauzeknop!' },
+            { id: 'plank',  naam: 'Planken',            icoon: '🧘', type: 'timer', waarde: 60,  xp: 20, munten: 10, minuten: 1,  tekst: 'Houd de plank 1 minuut vol. Rug recht, buik strak!' },
+            { id: 'pushup', naam: 'Push-ups',           icoon: '💪', type: 'reps',  waarde: 15, xp: 30, munten: 15, minuten: 2,  tekst: 'Doe 15 push-ups. Tik na elke push-up op de knop.' },
+            { id: 'ren',    naam: 'Hardlopen / Rennen', icoon: '🏃', type: 'timer', waarde: 300, xp: 40, munten: 20, minuten: 5,  tekst: 'Ren 5 minuten. Begin rustig en houd het vol!' }
+        ];
+        const DIEREN = [
+            { id: 'hond',     naam: 'Bello',  emoji: '🐶', prijs: 0 },
+            { id: 'kat',      naam: 'Mia',    emoji: '🐱', prijs: 60 },
+            { id: 'konijn',   naam: 'Bobbel', emoji: '🐰', prijs: 80 },
+            { id: 'vos',      naam: 'Vlam',   emoji: '🦊', prijs: 100 },
+            { id: 'panda',    naam: 'Pip',    emoji: '🐼', prijs: 120 },
+            { id: 'eenhoorn', naam: 'Stella', emoji: '🦄', prijs: 200 }
+        ];
+        // Accessoires per plek: hoofd (petten en hoedjes), bril en ketting. Ids moeten uniek zijn.
+        const WINKEL = {
+            dieren: DIEREN,
+            hoofd: [
+                { id: 'geen',      naam: 'Geen hoofddeksel', prijs: 0 },
+                { id: 'blauw',     naam: 'Blauwe sportpet',  stijl: 'sport', kleur: '#6f9cc4', prijs: 30 },
+                { id: 'groen',     naam: 'Groene sportpet',  stijl: 'sport', kleur: '#6fae90', prijs: 30 },
+                { id: 'zand',      naam: 'Zandkleurige pet', stijl: 'sport', kleur: '#e2c27b', prijs: 40 },
+                { id: 'roze',      naam: 'Roze muts',        stijl: 'muts',  kleur: '#e3a8b6', prijs: 50 },
+                { id: 'lila',      naam: 'Lila muts',        stijl: 'muts',  kleur: '#9d93c9', prijs: 50 },
+                { id: 'feesthoed', naam: 'Feesthoedje',      stijl: 'feest', kleur: '#e3a8b6', prijs: 60 },
+                { id: 'tophoed',   naam: 'Hoge hoed',        stijl: 'hoed',  kleur: '#35597f', prijs: 70 },
+                { id: 'kroon',     naam: 'Gouden kroon',     stijl: 'kroon', kleur: '#e2c27b', prijs: 120 }
+            ],
+            bril: [
+                { id: 'geen',        naam: 'Geen bril',        prijs: 0 },
+                { id: 'b-rond-blauw', naam: 'Ronde bril blauw', stijl: 'rond', kleur: '#35597f', prijs: 25 },
+                { id: 'b-rond-roze',  naam: 'Ronde bril roze',  stijl: 'rond', kleur: '#d98aa0', prijs: 25 },
+                { id: 'b-zon',        naam: 'Zonnebril',        stijl: 'zon',  kleur: '#2f3e4e', prijs: 40 }
+            ],
+            ketting: [
+                { id: 'geen',    naam: 'Geen ketting',    prijs: 0 },
+                { id: 'k-hart',  naam: 'Hartjesketting',  stijl: 'hart',  kleur: '#d98aa0', prijs: 50 },
+                { id: 'k-goud',  naam: 'Gouden medaille', stijl: 'goud',  kleur: '#d4b15a', prijs: 60 },
+                { id: 'k-parel', naam: 'Parelketting',    stijl: 'parel', kleur: '#f4efe6', prijs: 70 }
+            ]
+        };
+        const TABS = [['dieren', '🐾 Dieren'], ['hoofd', '🧢 Petten & hoedjes'], ['bril', '👓 Brillen'], ['ketting', '📿 Kettingen']];
+        const ANDERE_KINDEREN = [['Lisa', '🐱', 480], ['Noah', '🐰', 410], ['Emma', '🦊', 290], ['Daan', '🐼', 240]];
+        const XP_PER_NIVEAU = 100;
+
+        const $ = id => document.getElementById(id);
+        const esc = t => String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+        // ---------- Opgeslagen gegevens ----------
+        const s = { naam: '', xp: 0, munten: 0, gezondheid: 80, gekocht: [], dier: 'hond', gedragen: { hoofd: 'geen', bril: 'geen', ketting: 'geen' }, minuten: 0, opdrachten: 0 };
+        try { Object.assign(s, JSON.parse(localStorage.getItem('stepup') || '{}')); } catch (e) { /* geen opslag: geen probleem */ }
+        if (s.pet && s.pet !== 'geen') s.gedragen.hoofd = s.pet;   // oude opslag omzetten
+        delete s.pet;
+        const bewaar = () => { try { localStorage.setItem('stepup', JSON.stringify(s)); } catch (e) {} };
+        const niveau = () => Math.floor(s.xp / XP_PER_NIVEAU) + 1;
+
+        // ---------- Accessoires tekenen (SVG in de gekozen kleur) ----------
+        function svg(slot, it) {
+            const k = it.kleur, d = 'rgba(0,0,0,.16)';
+            const v = (w, hh, inner) => `<svg viewBox="0 0 ${w} ${hh}" aria-hidden="true">${inner}</svg>`;
+            if (slot === 'hoofd') return v(64, 44, ({
+                sport: `<path d="M8 34C8 14 20 6 34 6s22 10 22 28z" fill="${k}"/><path d="M34 34h28c2 5-3 8-9 8H34z" fill="${k}"/><path d="M34 34h28c2 5-3 8-9 8H34z" fill="${d}"/><circle cx="34" cy="6" r="3" fill="${d}"/>`,
+                muts:  `<path d="M10 34C10 12 21 6 32 6s22 6 22 28z" fill="${k}"/><rect x="7" y="30" width="50" height="10" rx="5" fill="${k}"/><rect x="7" y="30" width="50" height="10" rx="5" fill="${d}"/><circle cx="32" cy="6" r="6" fill="${k}"/>`,
+                hoed:  `<rect x="16" y="4" width="32" height="32" rx="3" fill="${k}"/><rect x="16" y="26" width="32" height="6" fill="${d}"/><rect x="6" y="34" width="52" height="7" rx="3.5" fill="${k}"/>`,
+                feest: `<path d="M32 4L50 40H14z" fill="${k}"/><path d="M25 24h14l5 10H20z" fill="rgba(255,255,255,.4)"/><circle cx="32" cy="4" r="4" fill="#ecd9a3"/>`,
+                kroon: `<path d="M8 40V12l12 12 12-16 12 16 12-12v28z" fill="${k}"/><rect x="8" y="34" width="48" height="6" fill="${d}"/><circle cx="32" cy="27" r="3" fill="#e3a8b6"/>`
+            })[it.stijl]);
+            if (slot === 'bril') return v(64, 24, it.stijl === 'zon'
+                ? `<path d="M3 5h26v10a8 8 0 0 1-8 8H11a8 8 0 0 1-8-8zM35 5h26v10a8 8 0 0 1-8 8H43a8 8 0 0 1-8-8z" fill="${k}"/><path d="M29 8q3-3 6 0" stroke="${k}" stroke-width="3" fill="none"/>`
+                : `<circle cx="18" cy="13" r="10" fill="rgba(255,255,255,.4)" stroke="${k}" stroke-width="3"/><circle cx="46" cy="13" r="10" fill="rgba(255,255,255,.4)" stroke="${k}" stroke-width="3"/><path d="M28 11q4-3 8 0" stroke="${k}" stroke-width="3" fill="none"/>`);
+            const lijn = `<path d="M8 4Q32 44 56 4" fill="none" stroke="${k}" stroke-width="2.5"/>`;
+            const kralen = [[17.6, 16.8], [24.8, 22.2], [32, 24], [39.2, 22.2], [46.4, 16.8]].map(([x, y]) => `<circle cx="${x}" cy="${y}" r="3.4" fill="${k}" stroke="rgba(0,0,0,.25)"/>`).join('');
+            return v(64, 40, it.stijl === 'parel' ? lijn + kralen
+                : it.stijl === 'hart' ? lijn + `<path d="M32 36c-9-6-7-14 0-10 7-4 9 4 0 10z" fill="${k}"/>`
+                : lijn + `<circle cx="32" cy="27" r="6" fill="${k}"/><circle cx="32" cy="27" r="3" fill="rgba(0,0,0,.15)"/>`);
+        }
+
+        const dier = () => DIEREN.find(x => x.id === s.dier) || DIEREN[0];
+        const bezit = it => it.prijs === 0 || s.gekocht.includes(it.id);
+        let tab = 'dieren';
+
+        // ---------- Alles op het scherm bijwerken ----------
+        function toonAlles() {
+            const lvl = niveau(), inNiveau = s.xp % XP_PER_NIVEAU, d = dier();
+            $('gebruikersnaam').textContent = s.naam;
+            $('xp-totaal').textContent = s.xp;
+            $('niveau-dashboard').textContent = lvl;
+            $('huisdier-niveau').textContent = lvl;
+            $('pet-badge').textContent = 'Niv. ' + lvl;
+            $('volgend-niveau').textContent = lvl + 1;
+            $('xp-tot-volgend-niveau').textContent = XP_PER_NIVEAU - inNiveau;
+            $('xp-voortgang').value = inNiveau;
+            $('huisdier-niveau-balk').value = inNiveau;
+            $('huisdier-gezondheid').value = s.gezondheid;
+            $('munten-dashboard').textContent = s.munten;
+            $('munten-winkel').textContent = s.munten;
+            $('ouder-minuten').textContent = s.minuten;
+            $('ouder-opdrachten').textContent = s.opdrachten;
+            $('klasdoel').value = Math.min(2000, 1250 + s.xp);
+            $('huisdier-naam').textContent = d.naam;
+            $('pet-emoji').textContent = d.emoji;
+            $('huisdier-stemming').textContent =
+                s.gezondheid >= 70 ? `${d.naam} is blij en vol energie! 😄` :
+                s.gezondheid >= 40 ? `${d.naam} wil graag met je bewegen 🙂` : `${d.naam} is moe. Ga samen bewegen! 😴`;
+
+            // Accessoires op het huisdier
+            ['hoofd', 'bril', 'ketting'].forEach(slot => {
+                const it = WINKEL[slot].find(x => x.id === s.gedragen[slot]);
+                $('acc-' + slot).innerHTML = it && it.kleur ? svg(slot, it) : '';
+            });
+            toonShop();
+
+            // Ranglijst: jij en de andere kinderen, gesorteerd op XP
+            const lijst = [...ANDERE_KINDEREN.map(k => ({ naam: k[0], dier: k[1], xp: k[2] })), { naam: s.naam + ' (jij)', dier: d.emoji, xp: s.xp, ik: true }]
+                .sort((a, b) => b.xp - a.xp);
+            $('ranglijst').innerHTML = lijst.map((k, i) =>
+                `<tr${k.ik ? ' class="leaderboard-me"' : ''}><td>${['🥇', '🥈', '🥉'][i] || ''} ${i + 1}</td><td>${esc(k.naam)}</td><td>${k.dier}</td><td>${k.xp}</td></tr>`).join('');
+        }
+
+        // ---------- Winkel tonen ----------
+        function toonShop() {
+            $('shop-tabs').innerHTML = TABS.map(([id, naam]) =>
+                `<button type="button" role="tab" class="shop-tab" aria-selected="${id === tab}" data-tab="${id}">${naam}</button>`).join('');
+            $('shop').innerHTML = WINKEL[tab].map(it => {
+                const op = tab === 'dieren' ? s.dier === it.id : s.gedragen[tab] === it.id;
+                const knop = op ? `<button type="button" class="btn btn-klein" disabled>✔ ${tab === 'dieren' ? 'Gekozen' : 'Op'}</button>`
+                    : bezit(it) ? `<button type="button" class="btn btn-klein btn-start" data-id="${it.id}">${tab === 'dieren' ? 'Kiezen' : 'Opzetten'}</button>`
+                    : `<button type="button" class="btn btn-klein btn-complete" data-id="${it.id}" ${s.munten < it.prijs ? 'disabled' : ''}>Koop 🪙 ${it.prijs}</button>`;
+                const voorbeeld = tab === 'dieren' ? `<span class="shop-dier">${it.emoji}</span>` : it.kleur ? svg(tab, it) : '🚫';
+                return `<div class="shop-item${op ? ' shop-op' : ''}"><div class="shop-preview">${voorbeeld}</div><p class="shop-naam">${esc(it.naam)}</p>${knop}</div>`;
+            }).join('');
+        }
+
+        $('shop-tabs').addEventListener('click', e => {
+            const b = e.target.closest('[data-tab]');
+            if (!b) return;
+            tab = b.dataset.tab;
+            toonShop();
+            $('shop-tabs').querySelector(`[data-tab="${tab}"]`).focus();
+        });
+
+        // Kopen, kiezen en opzetten
+        $('shop').addEventListener('click', e => {
+            const knop = e.target.closest('button[data-id]');
+            if (!knop) return;
+            const it = WINKEL[tab].find(x => x.id === knop.dataset.id);
+            if (!bezit(it)) {
+                if (s.munten < it.prijs) return;
+                s.munten -= it.prijs;
+                s.gekocht.push(it.id);
+                $('shop-status').textContent = `Gekocht: ${it.naam}! 🎉`;
+            } else {
+                $('shop-status').textContent = `Gekozen: ${it.naam}.`;
+            }
+            if (tab === 'dieren') s.dier = it.id; else s.gedragen[tab] = it.id;
+            bewaar(); toonAlles();
+            $('shop-tabs').querySelector(`[data-tab="${tab}"]`).focus();
+        });
+
+        // Klik op je huisdier: hij springt
+        $('huisdier-avatar').addEventListener('click', () => {
+            const a = $('huisdier-avatar');
+            a.classList.remove('feest'); void a.offsetWidth; a.classList.add('feest');
+        });
+
+        // ---------- Naam invoeren ----------
+        const toonWelkom = () => {
+            $('welkom').hidden = false;
+            document.body.classList.add('welkom-open');
+            $('naam-invoer').value = s.naam;
+            $('naam-fout').textContent = '';
+            $('btn-annuleer').hidden = !s.naam;
+            $('naam-invoer').focus();
+        };
+        const sluitWelkom = () => { $('welkom').hidden = true; document.body.classList.remove('welkom-open'); };
+        $('naam-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const naam = $('naam-invoer').value.trim().replace(/\s+/g, ' ');
+            if (!naam) { $('naam-fout').textContent = 'Vul eerst je naam in.'; return; }
+            s.naam = naam;
+            bewaar(); sluitWelkom(); toonAlles();
+        });
+        $('btn-annuleer').addEventListener('click', sluitWelkom);
+        $('btn-naam-wijzigen').addEventListener('click', toonWelkom);
+
+        // ---------- Uitdagingen en timer ----------
+        const el = {
+            keuze: $('keuzemenu'), icoon: $('task-icon'), titel: $('task-title'), tekst: $('task-description'), badge: $('task-badge'),
+            label: $('timer-label'), tijd: $('timer-display'), balk: $('timer-voortgang'),
+            start: $('btn-start'), stop: $('btn-stop'), klaar: $('btn-voltooid'), status: $('opdracht-status'),
+            kaart: $('task-card'), avatar: $('huisdier-avatar'), skip: $('btn-skip')
+        };
+        let gekozen = UITDAGINGEN[0], resterend = 0, teller = 0, eindtijd = 0, interval = null, loopt = false, afgerond = false;
+        const formatTijd = t => `${Math.floor(t / 60)}:${String(t % 60).padStart(2, '0')}`;
+
+        function toonTimer() {
+            const reps = gekozen.type === 'reps';
+            if (reps) {
+                el.tijd.textContent = `${teller} / ${gekozen.waarde}`;
+                el.balk.value = (teller / gekozen.waarde) * 100;
+                el.start.textContent = afgerond ? '🎉 Gehaald!' : '➕ +1 push-up';
+            } else {
+                el.tijd.textContent = formatTijd(resterend);
+                el.balk.value = ((gekozen.waarde - resterend) / gekozen.waarde) * 100;
+                el.start.textContent = resterend < gekozen.waarde && !afgerond ? '▶ Verder' : '▶ Start';
+            }
+            el.start.disabled = reps ? afgerond : (loopt || afgerond);
+            el.stop.disabled = reps || !loopt;
+            el.stop.hidden = reps;
+            el.skip.disabled = afgerond || !(loopt || teller > 0 || resterend < gekozen.waarde);   // pas na de start
+            el.klaar.disabled = !afgerond;                       // pas actief als de uitdaging klaar is
+            el.klaar.textContent = `✅ Opdracht voltooid (+${gekozen.xp} XP, +${gekozen.munten} 🪙)`;
+            el.keuze.querySelectorAll('button').forEach(b => b.disabled = loopt);
+        }
+
+        function resetUitdaging() {
+            clearInterval(interval);
+            loopt = false; afgerond = false; teller = 0; resterend = gekozen.waarde;
+            toonTimer();
+        }
+
+        function kies(u) {
+            gekozen = u;
+            el.icoon.textContent = u.icoon;
+            el.titel.textContent = u.naam;
+            el.tekst.textContent = u.tekst;
+            el.badge.textContent = `+${u.xp} XP · +${u.munten} 🪙`;
+            el.label.textContent = u.type === 'reps' ? 'Aantal gedaan' : 'Resterende tijd';
+            el.keuze.querySelectorAll('button').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.id === u.id)));
+            resetUitdaging();
+            el.status.textContent = u.type === 'reps' ? 'Tik op de knop na elke push-up!' : 'Druk op Start om te beginnen!';
+        }
+
+        UITDAGINGEN.forEach(u => {
+            const knop = document.createElement('button');
+            knop.type = 'button';
+            knop.className = 'challenge-card';
+            knop.dataset.id = u.id;
+            knop.setAttribute('aria-pressed', 'false');
+            knop.innerHTML = `<span class="challenge-icon" aria-hidden="true">${u.icoon}</span><span class="challenge-name">${u.naam}</span>` +
+                `<span class="challenge-meta">${u.type === 'reps' ? u.waarde + ' stuks' : u.waarde / 60 + ' min'} · +${u.xp} XP · +${u.munten} 🪙</span>`;
+            knop.addEventListener('click', () => kies(u));
+            el.keuze.appendChild(knop);
+        });
+
+        function rondAf() {
+            clearInterval(interval);
+            loopt = false; afgerond = true;
+            toonTimer();
+            el.status.textContent = '🎉 Super gedaan! Druk op "Opdracht voltooid" voor je XP en munten.';
+        }
+        function tik() {
+            resterend = Math.max(0, Math.ceil((eindtijd - Date.now()) / 1000));   // rekenen met de klok houdt de timer nauwkeurig
+            toonTimer();
+            if (resterend === 0) rondAf();
+        }
+
+        el.start.addEventListener('click', () => {
+            if (gekozen.type === 'reps') {
+                if (afgerond) return;
+                teller++;
+                toonTimer();
+                if (teller >= gekozen.waarde) rondAf();
+                else el.status.textContent = `Nog ${gekozen.waarde - teller} te gaan, jij kan dit! 💪`;
+                return;
+            }
+            if (loopt || afgerond) return;
+            eindtijd = Date.now() + resterend * 1000;
+            loopt = true;
+            interval = setInterval(tik, 250);
+            toonTimer();
+            el.status.textContent = 'Bezig... blijf bewegen! 🔥';
+        });
+        el.stop.addEventListener('click', () => {
+            if (!loopt) return;
+            tik();
+            if (afgerond) return;
+            clearInterval(interval); loopt = false;
+            toonTimer();
+            el.status.textContent = 'Pauze. Druk op Verder als je klaar bent!';
+        });
+
+        // Oefening eerder klaar: timer overslaan en direct voltooien
+        el.skip.addEventListener('click', () => {
+            if (afgerond) return;
+            if (gekozen.type === 'reps') teller = gekozen.waarde; else resterend = 0;
+            rondAf();
+            el.status.textContent = '⚡ Snel klaar! Druk op "Opdracht voltooid" voor je XP en munten.';
+            el.klaar.focus();
+        });
+
+        // ---------- Voltooid: XP en munten erbij ----------
+        el.klaar.addEventListener('click', () => {
+            if (!afgerond) return;
+            const oud = niveau(), verdiend = gekozen;
+            s.xp += verdiend.xp;
+            s.munten += verdiend.munten;
+            s.gezondheid = Math.min(100, s.gezondheid + 10);
+            s.minuten += verdiend.minuten;
+            s.opdrachten += 1;
+            bewaar(); toonAlles();
+
+            el.avatar.classList.remove('feest');
+            void el.avatar.offsetWidth;                          // animatie opnieuw starten
+            el.avatar.classList.add('feest');
+            const pop = document.createElement('span');
+            pop.className = 'xp-pop';
+            pop.textContent = `+${verdiend.xp} XP · +${verdiend.munten} 🪙`;
+            el.kaart.appendChild(pop);
+            setTimeout(() => pop.remove(), 1600);
+
+            resetUitdaging();
+            el.status.textContent = niveau() > oud
+                ? `🎊 Level up! ${dier().naam} is nu niveau ${niveau()}!`
+                : `Goed gedaan, ${s.naam}! Je kreeg ${verdiend.xp} XP en ${verdiend.munten} munten. 🌟`;
+        });
+
+        // ---------- Start ----------
+        toonAlles();
+        kies(UITDAGINGEN[0]);
+        if (!s.naam) toonWelkom();
+    })();
+    </script>
+</body>
+</html>
